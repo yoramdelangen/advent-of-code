@@ -1,3 +1,6 @@
 # Advent of code challanges
 
+Lets see if we can complete a few challanges of advent of code!
+Start learning something new with advent of codes...
 
+- 2022, GO lang...
