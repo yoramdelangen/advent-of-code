@@ -15,34 +15,13 @@ func main() {
 
 	crates, moves := parseFile(lines)
 
-  fmt.Printf("%v \n", crates)
+	fmt.Println("== Day5 ==")
+	fmt.Println("== Part 1 ==")
+	organize(crates, moves, 1)
 
-	// start moving the crates around
-	for _, m := range moves {
-		f := crates[m.From]
-
-    cm := f[len(f)-m.Num:]
-
-    // reverse the string because of the natural movement of elements,
-    // make sure the first item on the stack ends on top
-    sort.SliceStable(cm, func (i, j int) bool {
-      return i > j
-    })
-
-    // Move from => to
-    crates[m.To] = append(crates[m.To], cm...)
-    // Remove from items
-    crates[m.From] = crates[m.From][:len(f)-m.Num]
-	}
-
-	fmt.Println(crates)
-
-  final := []string{}
-  for _, c := range crates {
-    final = append(final, c[len(c)-1])
-  }
-
-	fmt.Println(strings.Join(final, ""))
+	crates, moves = parseFile(lines)
+	fmt.Println("== Part 2 ==")
+	organize(crates, moves, 2)
 }
 
 type Move struct {
@@ -51,10 +30,10 @@ type Move struct {
 	To   int
 }
 
-type Header = [][]string
+type Crates = [][]string
 
-func parseFile(lines []string) (Header, []Move) {
-	header := Header{}
+func parseFile(lines []string) (Crates, []Move) {
+	header := Crates{}
 	moves := []Move{}
 
 	hasHeader := false
@@ -76,7 +55,7 @@ func parseFile(lines []string) (Header, []Move) {
 				continue
 			}
 
-      idx := 0
+			idx := 0
 			for i := 0; i < len(line); i += 4 {
 				container := strings.ReplaceAll(line[i:i+3], " ", "")
 				container = strings.ReplaceAll(container, "[", "")
@@ -87,14 +66,14 @@ func parseFile(lines []string) (Header, []Move) {
 				}
 
 				if len(container) == 0 {
-          idx += 1
+					idx += 1
 					continue
 				}
 				// fmt.Println(container)
 				// fmt.Println(idx)
 
 				header[idx] = append(header[idx], container)
-        idx += 1
+				idx += 1
 			}
 
 			continue
@@ -105,8 +84,8 @@ func parseFile(lines []string) (Header, []Move) {
 
 		moves = append(moves, Move{
 			Num:  strToInt(f[0]),
-			From: strToInt(f[1])-1,
-			To:   strToInt(f[2])-1,
+			From: strToInt(f[1]) - 1,
+			To:   strToInt(f[2]) - 1,
 		})
 	}
 
@@ -123,4 +102,33 @@ func parseFile(lines []string) (Header, []Move) {
 func strToInt(i string) int {
 	o, _ := strconv.Atoi(i)
 	return o
+}
+
+func organize(crates Crates, moves []Move, part int) {
+	// start moving the crates around
+	for _, m := range moves {
+		f := crates[m.From]
+
+		cm := f[len(f)-m.Num:]
+
+		// reverse the string because of the natural movement of elements,
+		// make sure the first item on the stack ends on top
+		if part == 1 {
+			sort.SliceStable(cm, func(i, j int) bool {
+				return i > j
+			})
+		}
+
+		// Move from => to
+		crates[m.To] = append(crates[m.To], cm...)
+		// Remove from items
+		crates[m.From] = crates[m.From][:len(f)-m.Num]
+	}
+
+	final := []string{}
+	for _, c := range crates {
+		final = append(final, c[len(c)-1])
+	}
+
+	fmt.Println(strings.Join(final, ""))
 }
