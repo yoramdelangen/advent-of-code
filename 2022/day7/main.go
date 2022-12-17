@@ -44,31 +44,47 @@ func main() {
 				path = "/" + path
 			}
 
-			fmt.Println("Path: " + path)
+			fmt.Println("CD: " + path)
 		} else if strings.HasPrefix(line, "dir") {
 			//
 		} else {
-      // when its a file size with filename
+			// when its a file size with filename
 			r := regexp.MustCompile(`\d+`)
 			fs, _ := strconv.Atoi(r.FindString(line))
 
-			sizes[path] += fs
+			// sizes[path] += fs
+			IncrementSizes(sizes, path, fs)
 
-			fmt.Printf("Filesize: %T\n", fs)
-			fmt.Println(fs)
+			fmt.Printf("Filesize: %d\n", fs)
 		}
 	}
 
-  // only grab the filesizes directories lower then 100k
-  sumSizes := 0
-  for _, size := range sizes{
-    if size > 100000 {
-      continue
-    }
+	fmt.Println("")
+	fmt.Printf("Found %d folders\n", len(sizes))
+	// only grab the filesizes directories lower then 100k
+	sumSizes := 0
+	for f, size := range sizes {
+		if size >= 100000 {
+			continue
+		}
 
-    sumSizes += size
-  }
+		fmt.Printf("folder: %s, size: %d\n", f, size)
+		sumSizes += size
+	}
 
-	fmt.Printf("Sizes: %+v\n", sizes)
+	// fmt.Printf("Sizes: %+v\n", sizes)
 	fmt.Printf("Sum sizes at most 100k: %+v\n", sumSizes)
+}
+
+// recusively adding sizes to all its path directories
+func IncrementSizes(sizes map[string]int, path string, size int) {
+	sizes[path] += size
+
+	sp := strings.Split(path, "/")
+	fmt.Println(sp)
+    for i := 1; i < len(sp); i++ {
+		p := strings.Join(sp[:i], "/")
+
+        sizes[p] +=  size
+	}
 }
