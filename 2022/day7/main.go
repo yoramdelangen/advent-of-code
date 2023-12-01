@@ -4,12 +4,15 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 )
+const TOTAL_SPACE = 70000000
+const REQUIRED_SPACE = 30000000
 
 func main() {
-	c, _ := os.ReadFile("input")
+	c, _ := os.ReadFile("input_test")
 	lines := strings.Split(string(c), "\n")
 
 	sizes := map[string]int{}
@@ -59,8 +62,37 @@ func main() {
 		}
 	}
 
+    Part1(sizes)
+
+    Part2(sizes)
+}
+
+// recusively adding sizes to all its path directories
+func IncrementSizes(sizes map[string]int, path string, size int) {
+	// sizes[path] += size
+
+	sp := strings.Split(path, "/")
+    for i := 1; i < len(sp); i++ {
+		p := strings.Join(sp[:i+1], "/")
+
+        sizes[p] +=  size
+	}
+}
+
+func TotalUsedSpace(sizes map[string]int) int {
+	sumSizes := 0
+	for _, size := range sizes {
+		sumSizes += size
+	}
+
+    return sumSizes
+}
+
+func Part1(sizes map[string]int) {
 	fmt.Println("")
+	fmt.Println("== Part 1 ==")
 	fmt.Printf("Found %d folders\n", len(sizes))
+
 	// only grab the filesizes directories lower then 100k
 	sumSizes := 0
 	for f, size := range sizes {
@@ -73,18 +105,43 @@ func main() {
 	}
 
 	// fmt.Printf("Sizes: %+v\n", sizes)
-	fmt.Printf("Sum sizes at most 100k: %+v\n", sumSizes)
+	fmt.Printf("SUM SIZES AT MOST 100K: %+v\n", sumSizes)
 }
 
-// recusively adding sizes to all its path directories
-func IncrementSizes(sizes map[string]int, path string, size int) {
-	sizes[path] += size
+func Part2(sizes map[string]int) {
+	fmt.Println("")
+	fmt.Println("== Part 2 ==")
 
-	sp := strings.Split(path, "/")
-	fmt.Println(sp)
-    for i := 1; i < len(sp); i++ {
-		p := strings.Join(sp[:i], "/")
+    sizes = SortByValue(sizes)
 
-        sizes[p] +=  size
-	}
+    fmt.Printf("%+v\n", sizes)
+
+    totalSize := TotalUsedSpace(sizes)
+
+    fmt.Printf("%+v\n", totalSize)
+}
+
+func SortByValue(ob map[string]int) map[string]int {
+    keys := make([]string, 0, len(ob))
+    fmt.Println(ob)
+
+    for key := range ob {
+        keys = append(keys, key)
+    }
+
+    sort.SliceStable(keys, func(i, j int) bool {
+        return ob[keys[i]] < ob[keys[j]]
+    })
+
+    n := make(map[string]int)
+    fmt.Println(keys)
+
+    for _, k := range keys {
+        n[k] = ob[k]
+    }
+
+    fmt.Println("idohf")
+    fmt.Println(n)
+
+    return n
 }
