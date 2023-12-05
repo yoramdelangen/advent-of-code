@@ -8,12 +8,16 @@ enum Colors {
 }
 
 fn main() {
-    let input = include_str!("input.txt");
+    let input = include_str!("example1.txt");
+
+    let mut color_count: HashMap<Colors, u32> = HashMap::new();
+    color_count.insert(Colors::Green, 0);
+    color_count.insert(Colors::Red, 0);
+    color_count.insert(Colors::Blue, 0);
 
     let total: u32 = input
         .lines()
         .map(|line| {
-            // println!("Part: {}", line)
             let parts = line.split(":").collect::<Vec<_>>();
             let game = parts
                 .first()
@@ -22,9 +26,7 @@ fn main() {
                 .parse::<u32>()
                 .unwrap();
 
-            // println!("last: {:?}", parts.last().unwrap().split(";"));
-
-            let mut color_count: HashMap<Colors, u32> = HashMap::new();
+            color_count.clear();
             color_count.insert(Colors::Green, 0);
             color_count.insert(Colors::Red, 0);
             color_count.insert(Colors::Blue, 0);
@@ -33,8 +35,9 @@ fn main() {
                 set.trim().split(",").into_iter().for_each(|play| {
                     let mut m = play.split_whitespace();
                     let d = m.next().unwrap().parse::<u32>().unwrap();
+                    let c = m.next().unwrap();
 
-                    let t = match m.next().unwrap() {
+                    let t = match c {
                         "green" => Colors::Green,
                         "red" => Colors::Red,
                         "blue" => Colors::Blue,
@@ -51,9 +54,11 @@ fn main() {
             print!("Game id: {:?} ", game);
             print!("Counting: {:?} ", color_count);
 
-            let game_sum = color_count.get(&Colors::Green).unwrap() *  
-                color_count.get(&Colors::Blue).unwrap() * 
-                color_count.get(&Colors::Red).unwrap();
+            let green_count = *color_count.get(&Colors::Green).unwrap();
+            let red_count = *color_count.get(&Colors::Red).unwrap();
+            let blue_count = *color_count.get(&Colors::Blue).unwrap();
+
+            let game_sum = green_count * red_count * blue_count;
 
             println!("Game sum: {}", game_sum);
 
