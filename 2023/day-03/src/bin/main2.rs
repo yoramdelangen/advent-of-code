@@ -95,8 +95,6 @@ impl Parser {
         if &char == &'*' {
             return Some(index);
         }
-
-        // !char.is_numeric() && char != &'.'
         None
     }
 
@@ -118,9 +116,6 @@ fn main() {
     let file_content = include_str!("input.txt");
 
     let content: Vec<char> = file_content.trim().replace('\n', "").chars().collect();
-
-    // println!("Line length: {:?}", LINE_SIZE);
-    // println!("Lines: {:?}", content);
 
     let mut tracking_digit = "".to_string();
     let mut is_tracking_digit = false;
