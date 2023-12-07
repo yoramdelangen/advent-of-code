@@ -1,0 +1,35 @@
+const LINE_SIZE: u8 = 10;
+const SYMBOL_CHARS = ('*' , '$' , '#' , '+');
+
+fn main() {
+    let content: Vec<char> = include_str!("example.txt").trim().chars().collect();
+
+    println!("Line length: {:?}", LINE_SIZE);
+    println!("Lines: {:?}", content);
+
+    for (i, char) in content.iter().enumerate() {
+        match char {
+            '0'..='9' => has_adjacent_symbols(char, i),
+            SYMBOL_CHARS => todo!(),
+            '.' | _ => continue,
+        };
+    }
+}
+
+fn has_adjacent_symbols(char: &char, index: usize) -> bool {
+    // TODO: determine which positions we need to validate
+    // in case we find a direct symbol, we can determine its true
+
+    println!("Checking: {} on position: {}", char, index);
+    
+    // TODO: check horizontal directly
+    // TODO: verticle checking for symbols
+
+    // TODO: detect if we can do everything above
+
+    true
+}
+
+fn is_symbol_char(char: &char) -> bool {
+    matches!(char, SYMBOL_CHARS)
+}
